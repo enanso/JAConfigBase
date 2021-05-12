@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  JAConfigBase: b9cb7bda97f4a0700c3d354dae67cf8fcd87e88a
+  JAConfigBase: 114bac7356aa29cc8cde62dccaae7e69360a9205
 
 PODFILE CHECKSUM: e7dac109d4d924b5497ad7035712518d6cb0e6e6
 

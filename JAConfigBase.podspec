@@ -29,13 +29,15 @@ TODO: Add long description of the pod here.
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.0'
-
   s.source_files = 'JAConfigBase/Classes/**/*'
   
+  s.private_header_files = 'JAConfigBase/Classes/**/*.m'
   # s.resource_bundles = {
   #   'JAConfigBase' => ['JAConfigBase/Assets/*.png']
   # }
-  s.public_header_files = 'Pod/Classes/**/*.h'
+#  s.public_header_files = 'JAConfigBase/Classes/**/*.m'
+#  s.private_header_files = 'JAConfigBase/Classes/*.m'
+#  s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end
