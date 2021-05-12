@@ -62,7 +62,7 @@ pushAndTag(){
     else
         echo -e "${RED}打Tag失败,本地可能已经存在 ${tag}${NC}🌧🌧🌧"
         echo -e "输入命令【git tag】查看本地tag列表"
-        echo -e "单击"Q"返回继续操作终端"
+        echo -e "单击【Q】返回继续操作终端"
         echo -e "输入命令【git tag -d ${tag}】删除本地tag"
         echo -e "输入命令【git push origin :refs/tags/${tag}】删除远程tag"
         exit 1
