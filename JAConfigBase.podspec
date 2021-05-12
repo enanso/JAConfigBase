@@ -24,20 +24,16 @@ TODO: Add long description of the pod here.
   s.homepage         = 'https://github.com/enanso/JAConfigBase'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'aaa' => 'aaa' }
+  s.author           = { 'enan' => 'lanmemory@163.com' }
   s.source           = { :git => 'https://github.com/enanso/JAConfigBase.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.0'
   s.source_files = 'JAConfigBase/Classes/**/*'
   s.public_header_files = 'JAConfigBase/Classes/**/*.h'
-  #s.private_header_files = 'JAConfigBase/Classes/**/*.m'
   # s.resource_bundles = {
   #   'JAConfigBase' => ['JAConfigBase/Assets/*.png']
   # }
-#  s.public_header_files = 'JAConfigBase/Classes/**/*.h'
-#  s.private_header_files = 'JAConfigBase/Classes/*.h'
-#  s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end
