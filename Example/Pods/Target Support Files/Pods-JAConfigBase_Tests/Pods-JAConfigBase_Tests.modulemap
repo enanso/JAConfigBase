@@ -1,0 +1,6 @@
+framework module Pods_JAConfigBase_Tests {
+  umbrella header "Pods-JAConfigBase_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'JAConfigBase'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of JAConfigBase.'
+  s.summary          = '基础配置库-JAConfigBase'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/lanmemory@163.com/JAConfigBase'
+  s.homepage         = 'https://github.com/enanso/JAConfigBase'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'lanmemory@163.com' => 'lanmemory@163.com' }
-  s.source           = { :git => 'https://github.com/lanmemory@163.com/JAConfigBase.git', :tag => s.version.to_s }
+  s.author           = { 'aaa' => 'aaa' }
+  s.source           = { :git => 'https://github.com/enanso/JAConfigBase.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.0'
@@ -35,8 +35,7 @@ TODO: Add long description of the pod here.
   # s.resource_bundles = {
   #   'JAConfigBase' => ['JAConfigBase/Assets/*.png']
   # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
+  s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end

@@ -7,7 +7,7 @@
 //
 
 #import "JAViewController.h"
-
+#import <JAConfigBase/JAConfig.h>
 @interface JAViewController ()
 
 @end

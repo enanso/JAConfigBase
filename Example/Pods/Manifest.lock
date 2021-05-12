@@ -1,0 +1,16 @@
+PODS:
+  - JAConfigBase (0.1.0)
+
+DEPENDENCIES:
+  - JAConfigBase (from `../`)
+
+EXTERNAL SOURCES:
+  JAConfigBase:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  JAConfigBase: b9cb7bda97f4a0700c3d354dae67cf8fcd87e88a
+
+PODFILE CHECKSUM: e7dac109d4d924b5497ad7035712518d6cb0e6e6
+
+COCOAPODS: 1.10.1
