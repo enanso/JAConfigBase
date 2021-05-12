@@ -61,6 +61,7 @@ pushAndTag(){
         echo -e "${GREEN}打Tag成功${NC}🚀🚀🚀"
     else
         echo -e "${RED}打Tag失败${NC}🌧🌧🌧"
+        git tag
         exit 1
     fi
 }
