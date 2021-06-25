@@ -15,12 +15,12 @@ SpecName=${result}
 
 #pull代码
 pull() {
-    echo -e "${GREEN}\n第一步：准备pull代码${NC}⏰⏰⏰"
+    echo -e "${GREEN}\n第一步：准备拉取代码${NC}⏰⏰⏰"
     #先拉代码
     if git pull; then
-        echo -e "${GREEN}pull代码成功${NC}🚀🚀🚀"
+        echo -e "${GREEN}拉取代码成功${NC}🚀🚀🚀"
     else
-        echo -e "${RED}pull代码失败，请手动解决冲突${NC}🌧🌧🌧"
+        echo -e "${RED}拉取代码失败，请手动解决冲突${NC}🌧🌧🌧"
         exit 1
     fi
 }
@@ -90,13 +90,45 @@ publishBinary(){
     echo -e "${GREEN}发布${tag}二进制版本成功${NC}🚀🚀🚀"
 }
 
-
+# 循环输入直到有值为止
+inputValue(){
+    read -p "请输入【$1】: " word
+    if [[ -z $word ]]; then
+        inputValue "$1"
+    fi
+}
 publish(){
-    #
-    echo -e "${GREEN}请输入提交内容:${NC}"
-    read a
-    commitText=${a}
+
+    #拉取代码
+    pull
     
+    # 是否带入参数
+    if [[ ! -z $1 ]];then
+       commitText=$1
+    fi
+    
+    if [[ -z $commitText ]];then
+       #执行循环输入
+       inputValue "提交内容"
+       #赋值操作
+       commitText=${word}
+    fi
+    read -p "是否仅提交代码（输入回车、空格或者y确认）" res
+    if [ -z ${res} ]||[ ${res} == "y" ]||[ ${res} == "Y" ];then
+        git add .
+        if ! git commit -m ${commitText}
+        then
+            echo -e "${RED}git commit失败${NC}🌧🌧🌧"
+            exit 1
+        fi
+        if ! git push
+        then
+            echo -e "${RED}git push失败${NC}🌧🌧🌧"
+            exit 1
+        fi
+        echo -e "${GREEN}提交代码成功${NC}🚀🚀🚀"
+        return
+    fi
     #
     echo -e "${GREEN}请输入tag:${NC}"
     read b
@@ -117,9 +149,6 @@ publish(){
         echo -e "${RED}请配置podspec的名称${NC}🌧🌧🌧"
         exit 1
     fi
-    
-    #
-    pull
 
     #
     updatePodspec
@@ -141,4 +170,4 @@ publish(){
 
 }
 
-publish
+publish $1

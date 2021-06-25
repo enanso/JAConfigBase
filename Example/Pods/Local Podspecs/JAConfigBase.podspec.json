@@ -1,6 +1,6 @@
 {
   "name": "JAConfigBase",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "summary": "基础配置库-JAConfigBase",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/enanso/JAConfigBase",
@@ -9,15 +9,15 @@
     "file": "LICENSE"
   },
   "authors": {
-    "aaa": "aaa"
+    "enan": "lanmemory@163.com"
   },
   "source": {
     "git": "https://github.com/enanso/JAConfigBase.git",
-    "tag": "0.1.0"
+    "tag": "0.1.1"
   },
   "platforms": {
     "ios": "9.0"
   },
   "source_files": "JAConfigBase/Classes/**/*",
-  "private_header_files": "JAConfigBase/Classes/**/*.m"
+  "public_header_files": "JAConfigBase/Classes/**/*.h"
 }

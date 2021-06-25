@@ -35,3 +35,6 @@ Carthage/Build
 # `pod install` in .travis.yml
 #
 # Pods/
+#忽略Demo中pod的安装库
+Example/Pods
+Example/Podfile.lock

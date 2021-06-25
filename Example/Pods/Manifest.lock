@@ -1,5 +1,5 @@
 PODS:
-  - JAConfigBase (0.1.0)
+  - JAConfigBase (0.1.1)
 
 DEPENDENCIES:
   - JAConfigBase (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  JAConfigBase: 114bac7356aa29cc8cde62dccaae7e69360a9205
+  JAConfigBase: 7751bb6593d7fe7b3ad37f462003d86fab747da7
 
 PODFILE CHECKSUM: e7dac109d4d924b5497ad7035712518d6cb0e6e6
 
