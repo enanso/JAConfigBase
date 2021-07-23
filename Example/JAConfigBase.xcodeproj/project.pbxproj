@@ -248,7 +248,7 @@
 				ORGANIZATIONNAME = "lanmemory@163.com";
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = QC968VEC2Y;
+						DevelopmentTeam = 6JHY626E93;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -497,12 +497,12 @@
 			baseConfigurationReference = 26A540B85A5D3A75BFE9DCE3 /* Pods-JAConfigBase_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = QC968VEC2Y;
+				DEVELOPMENT_TEAM = 6JHY626E93;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JAConfigBase/JAConfigBase-Prefix.pch";
 				INFOPLIST_FILE = "JAConfigBase/JAConfigBase-Info.plist";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = org.ay.demo.module;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
@@ -514,12 +514,12 @@
 			baseConfigurationReference = 6A5477FC1C516B2D57C9A772 /* Pods-JAConfigBase_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = QC968VEC2Y;
+				DEVELOPMENT_TEAM = 6JHY626E93;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JAConfigBase/JAConfigBase-Prefix.pch";
 				INFOPLIST_FILE = "JAConfigBase/JAConfigBase-Info.plist";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = org.ay.demo.module;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;

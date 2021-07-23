@@ -3,8 +3,7 @@ use_frameworks!
 platform :ios, '9.0'
 
 target 'JAConfigBase_Example' do
-  pod 'JAConfigBase', :path => '../'
-
+                 pod 'QYCMonitor', :git => 'http://git.qpaas.com/PaasPods/QYCMonitor.git', :branch => 'project/Project_Base'                 pod 'QYCQChat', :git => 'http://git.qpaas.com/PaasPods/QYCQChat.git', :branch => 'feature/LXFeb_UserInfo'  pod 'JAConfigBase', :path => '../'
   target 'JAConfigBase_Tests' do
     inherit! :search_paths
 

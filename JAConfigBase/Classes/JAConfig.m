@@ -9,10 +9,58 @@ void swizzing(Class class, SEL originalSelector, SEL swizzledSelector){
     method_exchangeImplementations(originalMethod, swizzledMethod);
 }
 
-NSString *const EnvCurrKey = @"EnvCurrKey";
+//NSString *const EnvCurrKey = @"EnvCurrKey";
 
-NSString *const BundleId = @"org.cocoapods.demo.JAConfigBase-Example";
+//异或存取key
+#define KEY 0xCA
 
+//处理加密常量字符串“org.ay.demo.module”，阻止符号进入常量区
+static NSString *BundleId(){
+    unsigned char values[] = {
+        (KEY ^ 'o'),
+        (KEY ^ 'r'),
+        (KEY ^ 'g'),
+        (KEY ^ '.'),
+        (KEY ^ 'a'),
+        (KEY ^ 'y'),
+        (KEY ^ '.'),
+        (KEY ^ 'd'),
+        (KEY ^ 'e'),
+        (KEY ^ 'm'),
+        (KEY ^ 'o'),
+        (KEY ^ '.'),
+        (KEY ^ 'm'),
+        (KEY ^ 'o'),
+        (KEY ^ 'd'),
+        (KEY ^ 'u'),
+        (KEY ^ 'l'),
+        (KEY ^ 'e'),
+        (KEY ^ '\0')//循环出口
+    };
+    unsigned char *p = values;
+    while (((*p) ^=KEY) != '\0') p++;
+    return [NSString stringWithUTF8String:(const char*)values];
+}
+
+//处理加密常量字符串“envCurrKey”，阻止符号进入常量区
+static NSString *EnvCurrKey(){
+    unsigned char values[] = {
+        (KEY ^ 'e'),
+        (KEY ^ 'n'),
+        (KEY ^ 'v'),
+        (KEY ^ 'C'),
+        (KEY ^ 'u'),
+        (KEY ^ 'r'),
+        (KEY ^ 'r'),
+        (KEY ^ 'K'),
+        (KEY ^ 'e'),
+        (KEY ^ 'y'),
+        (KEY ^ '\0')//循环出口
+    };
+    unsigned char *p = values;
+    while (((*p) ^=KEY) != '\0') p++;
+    return [NSString stringWithUTF8String:(const char*)values];
+}
 @implementation JAConfig
 
 + (NSURLSession *)qy_sessionWithConfiguration:(NSURLSessionConfiguration *)configuration
@@ -56,10 +104,24 @@ NSString *const BundleId = @"org.cocoapods.demo.JAConfigBase-Example";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSString *bundleId = [self bundleID];
-        if (![bundleId isEqual:BundleId]) {
+        if (![bundleId isEqual:BundleId()]) {
             NSLog(@"===BundleId与当前项目不匹配:%@",bundleId);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.12* NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                exit(0);
+                //汇编调用系统退出应用程序的方法
+                #ifdef __arm64__
+                    __asm__ volatile(
+                     "mov x0,#0\n"
+                     "mov x16,#1\n"//这里"1"就是syscall调用SYS_exit系统方法的编号
+                     "svc #0x80\n"//这条指令就是触发中断（系统级别的跳转）
+                    );
+                #endif
+                #ifdef __arm__
+                    __asm__ volatile(
+                     "mov r0,#0\n"
+                     "mov r16,#1\n"//这里"1"就是syscall调用SYS_exit系统方法的编号
+                     "svc #80\n"//这条指令就是触发中断（系统级别的跳转）
+                    );
+                #endif
             });
         }
         Class class = [NSURLSession class];
@@ -85,7 +147,7 @@ NSString *const BundleId = @"org.cocoapods.demo.JAConfigBase-Example";
 +(NSString *)baseUrl {
     
 #ifdef DEBUG
-    NSString *baseURL = [[NSUserDefaults standardUserDefaults] objectForKey:EnvCurrKey];
+    NSString *baseURL = [[NSUserDefaults standardUserDefaults] objectForKey:EnvCurrKey()];
     if (baseURL) {
         return baseURL;
     }
