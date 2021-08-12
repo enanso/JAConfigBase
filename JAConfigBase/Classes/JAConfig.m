@@ -9,8 +9,6 @@ void swizzing(Class class, SEL originalSelector, SEL swizzledSelector){
     method_exchangeImplementations(originalMethod, swizzledMethod);
 }
 
-//NSString *const EnvCurrKey = @"EnvCurrKey";
-
 //异或存取key
 #define KEY 0xCA
 

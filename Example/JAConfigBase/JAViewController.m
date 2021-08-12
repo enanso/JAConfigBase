@@ -8,12 +8,12 @@
 
 #import "JAViewController.h"
 #import <JAConfigBase/JAConfig.h>
+#import <CommonCrypto/CommonDigest.h>
 #import <sys/sysctl.h>
 #import <sys/syscall.h>
-
+#import "JAConfigBase_Example-Swift.h"
 //__attribute__((always_inline))强制内联，所有加了__attribute__((always_inline))的函数再被调用时不会被编译成函数调用而是直接扩展到调用函数体内
 static int is_debugged() __attribute__((always_inline));
-
 
 
 @interface JAViewController ()
@@ -71,7 +71,23 @@ static int is_debugged(){
     self.label.text = @"启动了";
 }
 - (void)testLog:(NSString *)log{
-    NSLog(@"===输出：%@",log);
+    //直接比较两个文件的内容
+ 
+    
+//    NSString *path = [[NSBundle mainBundle] bundlePath];
+//    NSString *filePath1 = [path stringByAppendingPathComponent:@"aa.txt"];
+//    NSString *filePath2 = [path stringByAppendingPathComponent:@"aa.txt"];
+//
+//
+//    // MD5摘要比较
+//    NSString *md5str1 = [self md5WithFilePath:filePath1];
+//    NSString *md5str2 = [self md5WithFilePath:filePath2];
+//    NSLog(@"==第1个==%@==第2个==%@",md5str1,md5str2);
+//    if ([md5str1 isEqualToString:md5str2]){
+//        NSLog(@"===相同==");
+//    }else {
+//        NSLog(@"===不相同==");
+//    }
 }
 //检测embedded.mobileprovision是否被篡改，篡改则视为第二次签名，防止二次打包
 // 校验值，可通过上一次打包获取
@@ -97,12 +113,13 @@ void checkSignatureMsg() {
     [super didReceiveMemoryWarning];
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    if (is_debugged() == YES) {
-        self.label.text = @"正在调试";
-        [self testLog:@"你调试的时候点我了"];
-    }else {
-        self.label.text = @"没有调试";
-    }
+    [self testLog:@"你调试的时候点我了"];
+//    if (is_debugged() == YES) {
+//        self.label.text = @"正在调试";
+//        [self testLog:@"你调试的时候点我了"];
+//    }else {
+//        self.label.text = @"没有调试";
+//    }
 ////汇编调用系统方法，阻止对ptrace下符号断点
 //#ifdef __arm64__
 //    __asm__ volatile(
@@ -125,4 +142,34 @@ void checkSignatureMsg() {
 //    );
 //#endif
 }
+
+//对文件进行加密处理（256字节）
+- (NSString *)md5WithFilePath:(NSString *)path {
+    
+    NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+    if ( handle== nil ) {
+        return nil;
+    }
+    CC_MD5_CTX md5;
+    CC_MD5_Init(&md5);
+    BOOL done = NO;
+    while ( !done ) {
+        NSData* fileData = [handle readDataOfLength: 256 ];
+        CC_MD5_Update(&md5, [fileData bytes], (CC_LONG)[fileData length]);
+        if( [fileData length] == 0 ) done = YES;
+    }
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5_Final(digest, &md5);
+    NSString* s = [NSString stringWithFormat: @"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                   digest[0], digest[1],
+                   digest[2], digest[3],
+                   digest[4], digest[5],
+                   digest[6], digest[7],
+                   digest[8], digest[9],
+                   digest[10], digest[11],
+                   digest[12], digest[13],
+                   digest[14], digest[15]];
+    return s;
+}
+
 @end
