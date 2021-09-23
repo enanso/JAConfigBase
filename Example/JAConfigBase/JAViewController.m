@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <sys/sysctl.h>
 #import <sys/syscall.h>
+#include <pthread/pthread.h>
 #import "JAConfigBase_Example-Swift.h"
 //__attribute__((always_inline))强制内联，所有加了__attribute__((always_inline))的函数再被调用时不会被编译成函数调用而是直接扩展到调用函数体内
 static int is_debugged() __attribute__((always_inline));
@@ -19,11 +20,18 @@ static int is_debugged() __attribute__((always_inline));
 @interface JAViewController ()
 
 @property (nonatomic, strong) UILabel *label;
-
+@property(nonatomic, assign) pthread_rwlock_t lock;
+@property(nonatomic, strong) dispatch_queue_t queue;
+@property (nonatomic, strong) NSMutableArray *array;
 @end
 
 @implementation JAViewController
-
+- (NSMutableArray *)array {
+    if (!_array) {
+        _array = [[NSMutableArray alloc] init];
+    }
+    return _array;
+}
 //检测是否处于debug状态
 static int is_debugged(){
     
@@ -69,16 +77,19 @@ static int is_debugged(){
 - (void)viewDidLoad{
     [super viewDidLoad];
     self.label.text = @"启动了";
+//    [self GCDTest];
 }
+
 - (void)testLog:(NSString *)log{
     //直接比较两个文件的内容
  
+//    [self op];// 线程
+    
+    [self readsalf];///<安全读写
     
 //    NSString *path = [[NSBundle mainBundle] bundlePath];
 //    NSString *filePath1 = [path stringByAppendingPathComponent:@"aa.txt"];
 //    NSString *filePath2 = [path stringByAppendingPathComponent:@"aa.txt"];
-//
-//
 //    // MD5摘要比较
 //    NSString *md5str1 = [self md5WithFilePath:filePath1];
 //    NSString *md5str2 = [self md5WithFilePath:filePath2];
@@ -88,6 +99,127 @@ static int is_debugged(){
 //    }else {
 //        NSLog(@"===不相同==");
 //    }
+//    [self GCDTest];
+}
+- (void)GCDTest {
+    
+//    dispatch_sync(dispatch_get_main_queue(), ^(void){
+//                NSLog(@"这里死锁了");
+//            });
+    //串行
+//    dispatch_queue_t queue = dispatch_queue_create("com.demo.serialQueue", DISPATCH_QUEUE_SERIAL);
+    
+    // 主线程
+//    dispatch_queue_t queue = dispatch_get_main_queue();
+    // 全局队列
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    NSLog(@"1"); // 任务1
+    dispatch_async(queue, ^{
+        NSLog(@"2"); // 任务2
+//        dispatch_sync(queue, ^{
+//            NSLog(@"3"); // 任务3
+//        });
+        // performSelector（只在主线程中使用）
+        [self performSelector:@selector(testMethod1) withObject:@"aaa" afterDelay:0.0];
+        NSLog(@"4"); // 任务4
+    });
+    NSLog(@"5"); // 任务
+}
+
+- (void)testMethod1 {
+    NSLog(@"3"); // 任务3
+}
+
+/**
+ 参考：https://blog.csdn.net/u011043997/article/details/86678771
+ 多线程：NSOperationQueue
+ */
+- (void)op{
+    
+    // 使用子类NSInvocationOperation（会在主线程调用，并没有创建新线程）
+//    NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(invocationOperation) object:nil];
+//    [op start];
+    
+      // 在其他线程中执行操作
+//    [NSThread detachNewThreadSelector:@selector(invocationOperation) toTarget:self withObject:nil];
+//    [NSThread detachNewThreadWithBlock:^{
+//        NSLog(@"2---%@",[NSThread currentThread]);///<打印当前线程
+//    }];
+    
+    
+//    //使用子类NSBlockOperation（会在主线程调用，并没有创建新线程）
+//    NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+//        [self invocationOperation];
+//    }];
+//    // 添加额外操作
+//    [op addExecutionBlock:^{
+//        [self operation:1];
+//    }];
+//    [op addExecutionBlock:^{
+//        [self operation:2];
+//    }];
+//    [op addExecutionBlock:^{
+//        [self operation:3];
+//    }];
+//    [op addExecutionBlock:^{
+//        [self operation:4];
+//    }];
+//    [op start];
+    // NSOperationQueue使用
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    // 设置最大并发操作（默认-1，不限制并发执行）
+    //    queue.maxConcurrentOperationCount = 1;// 串行队列
+    queue.maxConcurrentOperationCount = 2;// 并发队列
+    //    queue.maxConcurrentOperationCount = 8;// 并发队列
+    NSInvocationOperation *op1 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task1) object:nil];
+    NSInvocationOperation *op2 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task2) object:nil];
+    NSBlockOperation *op3 = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];///<模拟耗时操作
+            NSLog(@"3---%@",[NSThread currentThread]);///<打印当前线程
+        }
+    }];
+    NSBlockOperation *op4 = [NSBlockOperation blockOperationWithBlock:^{
+        for (int i = 0; i < 2; i++) {
+            [NSThread sleepForTimeInterval:2];///<模拟耗时操作
+            NSLog(@"4---%@",[NSThread currentThread]);///<打印当前线程
+        }
+    }];
+    op1.queuePriority = NSOperationQueuePriorityNormal;///<op1的优先级设置正常
+    op4.queuePriority = NSOperationQueuePriorityHigh;///<op1的优先级设置较高
+    [op3 addDependency:op2];//<让op3依赖于op2；先执行op2，再执行op3     
+    [op2 addDependency:op1];//<让op2依赖于op1；先执行op1，再执行op2
+    [queue addOperation:op1];
+    [queue addOperation:op2];
+    [queue addOperation:op3];
+    [queue addOperation:op4];
+    [op1 cancel];
+}
+
+- (void)invocationOperation {
+    for (int i = 0; i < 2; i++) {
+        [NSThread sleepForTimeInterval:2];///<模拟耗时操作
+        NSLog(@"0---%@",[NSThread currentThread]);///<打印当前线程
+    }
+}
+- (void)task1 {
+    for (int i = 0; i < 2; i++) {
+        [NSThread sleepForTimeInterval:2];///<模拟耗时操作
+        NSLog(@"1---%@",[NSThread currentThread]);///<打印当前线程
+    }
+}
+- (void)task2 {
+    for (int i = 0; i < 2; i++) {
+        [NSThread sleepForTimeInterval:2];///<模拟耗时操作
+        NSLog(@"2---%@",[NSThread currentThread]);///<打印当前线程
+    }
+}
+
+- (void)operation:(NSInteger)location {
+    for (int i = 0; i < 2; i++) {
+        [NSThread sleepForTimeInterval:2];///<模拟耗时操作
+        NSLog(@"%ld---%@",location,[NSThread currentThread]);///<打印当前线程
+    }
 }
 //检测embedded.mobileprovision是否被篡改，篡改则视为第二次签名，防止二次打包
 // 校验值，可通过上一次打包获取
@@ -170,6 +302,58 @@ void checkSignatureMsg() {
                    digest[12], digest[13],
                    digest[14], digest[15]];
     return s;
+}
+
+// 安全度读写
+- (void)readsalf {
+    
+    // 参考：https://www.jianshu.com/p/3ba7975f3841
+    // 底层读写锁
+    pthread_rwlock_init(&_lock, NULL);
+    dispatch_queue_t queue = dispatch_get_global_queue(0,0);
+//    dispatch_queue_t queue = dispatch_queue_create("com.demo.CONCURRENTQueue", DISPATCH_QUEUE_CONCURRENT);
+    for (NSInteger i = 0;i < 100; i++) {
+        dispatch_async(queue,  ^{
+            [self read:i];
+        });
+
+        dispatch_async(queue,  ^{
+            [self write:i];
+        });
+    }
+
+    //栅栏函数安全写（栅栏函数不能放在全局队列中）
+    self.queue = dispatch_queue_create("rw_queue", DISPATCH_QUEUE_CONCURRENT);
+    for (NSInteger i = 0;i < 100; i++) {
+        dispatch_async(self.queue, ^{
+            // 读
+            if (i < self.array.count) {
+                id value = self.array[i];
+                NSLog(@"===dispatch_async安全读：%@",value);
+            }
+        });
+        dispatch_barrier_async(self.queue, ^{
+           // 写
+           [self.array addObject:@(i)];
+        });
+    }
+}
+
+-(void)read:(NSInteger)index{
+    pthread_rwlock_rdlock(&_lock);
+    if (index < self.array.count) {
+        //读操作
+        id value = self.array[index];
+        NSLog(@"===安全读取值：%@",value);
+    }
+    pthread_rwlock_unlock(&_lock);
+}
+
+-(void)write:(NSInteger)index{
+    pthread_rwlock_wrlock(&_lock);
+    //  写操作
+    [self.array addObject:@(index)];
+    pthread_rwlock_unlock(&_lock);
 }
 
 @end
