@@ -13,6 +13,9 @@
 #import <sys/syscall.h>
 #include <pthread/pthread.h>
 #import "JAConfigBase_Example-Swift.h"
+
+static int  b  = 100;
+
 //__attribute__((always_inline))强制内联，所有加了__attribute__((always_inline))的函数再被调用时不会被编译成函数调用而是直接扩展到调用函数体内
 static int is_debugged() __attribute__((always_inline));
 
@@ -73,11 +76,37 @@ static int is_debugged(){
     }
     return _label;
 }
-
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+}
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+}
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+}
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+}
+- (void)loadView {
+    [super loadView];
+}
 - (void)viewDidLoad{
     [super viewDidLoad];
     self.label.text = @"启动了";
 //    [self GCDTest];
+    int a = 10;
+    void (^__weak block)(void) = ^{
+         NSLog(@"block----%d",a);
+     };
+    
+     void (^block1)(void) = ^{
+         NSLog(@"block1");
+     };
+   
+     NSLog(@"block-----%@",block);
+     NSLog(@"block1----%@",block1);
+
 }
 
 - (void)testLog:(NSString *)log{
